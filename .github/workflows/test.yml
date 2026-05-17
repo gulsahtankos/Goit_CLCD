@@ -28,9 +28,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Cypress Test Job
 
-    container:
-      image: cypress/base:latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -44,7 +41,7 @@ jobs:
         run: npm install
 
       - name: Run Cypress tests
-        run: npx cypress run --browser chrome
+        run: npx cypress run 
 
       - name: UploadCypress videos
         if: always()
