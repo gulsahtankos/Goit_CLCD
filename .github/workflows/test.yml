@@ -1,69 +1,63 @@
-name: CI-CD Pipeline  # isim vermek için kullanırız
+name: CI-CD Pipeline
 
 on:
+  workflow_dispatch:
 
-  workflow_dispatch: # manuel olarak kodumuzu çalıştırmamızı sağlar
+  schedule:
+    - cron: "0 8 * * *"
 
-  schedule: # kodumuzu hangi zaman aralıklarında çalıştırmak istiyoruz.
-    - cron: "0 8 * * *" # her gün sabah 8 de çalışsın.
-
-  push: # main branch'e her push yaptığımızda kod çalışır
+  push:
     branches:
       - main
 
   pull_request:
 
 jobs:
-
-  build: # ilk job
+  build:
     runs-on: ubuntu-latest
     name: Build job
 
     steps:
-
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Echo user login
         run: echo "Hello, ${{ github.actor }}"
 
-  test: # ikinci job
+  test:
     runs-on: ubuntu-latest
     name: Cypress Test Job
 
     container:
-      image: cypress/base:latest # cypress docker cont. kurmuş oluyoruz.
+      image: cypress/base:latest
 
     steps:
-
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js # nod.js kuruyoruz
+      - name: Set up Node.js
         uses: actions/setup-node@v3
-
         with:
           node-version: 18
 
-      - name: Install dependencies # dependencies kuruyoruz
-        uses: npm install
+      - name: Install dependencies
+        run: npm install
 
-      - name: Run Cypress tests # testimizi çalıştırıyoruz.
-        uses: npx cypress run
+      - name: Run Cypress tests
+        run: npx cypress run
 
-      - name: UploadCypress videos # otomasyonumuzda videoları kaydediyoruz
+      - name: UploadCypress videos
         if: always()
         uses: actions/upload-artifact@v4
-
         with:
           name: cypress-videos
           path: cypress/videos/**/*.mp4
           retention-days: 1
-        - name: UploadCypress screenshots # otomasyonumuzda ekran goruntulerini kaydediyoruz
-          if: always()
-          uses: actions/upload-artifact@v4
 
-          with:
-            name: cypress-screenshots
-            path: cypress/screenshots/**/*.png
-            retention-days: 1  
+      - name: UploadCypress screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots/**/*.png
+          retention-days: 1
