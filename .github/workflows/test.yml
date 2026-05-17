@@ -38,10 +38,10 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Run Cypress tests
-        run: npm exec cypress run
+        run: npm cypress run
 
       - name: UploadCypress videos
         if: always()
