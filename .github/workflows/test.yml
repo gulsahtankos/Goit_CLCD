@@ -41,7 +41,7 @@ jobs:
         run: npm install
 
       - name: Run Cypress tests
-        run: npx cypress run 
+        run: npm exec cypress run
 
       - name: UploadCypress videos
         if: always()
